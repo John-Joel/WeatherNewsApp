@@ -4,7 +4,10 @@ import { View, Text, Button, ScrollView, ActivityIndicator, StyleSheet } from 'r
 import { PreferencesContext } from '../contexts/PreferencesContext';
 import { getWeatherForecast } from '../services/WeatherService';
 import { getNewsHeadlines } from '../services/NewsService';
-
+import { Card } from 'react-native-elements';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import { FlatList } from 'react-native-gesture-handler';
+import LinearGradient from 'react-native-linear-gradient';
 const LATITUDE = 51.5074;   // Example: London
 const LONGITUDE = -0.1278;
 
@@ -32,7 +35,7 @@ export const HomeScreen = ({ navigation }: any) => {
         // Determine mood query based on temperature in Celsius
         const tempC = preferences.unit === 'metric'
           ? currentTemp
-          : (currentTemp - 32) * (5/9);
+          : (currentTemp - 32) * (5 / 9);
         let moodQuery = '';
         if (tempC < 15) {
           moodQuery = 'sad OR depressing';
@@ -61,35 +64,64 @@ export const HomeScreen = ({ navigation }: any) => {
     fetchData();
   }, [preferences]);
 
+
   if (loading) {
     return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#333" />
-        <Text>Loading weather and news...</Text>
-      </View>
+      <ScrollView style={{ flex: 1, backgroundColor: '#f2f2f2', }}>
+        <SkeletonPlaceholder borderRadius={4}>
+          <View style={{ marginVertical: 20 }}>
+            <View style={{ width: 200, height: 20, marginBottom: 6 }} />
+            <View style={{ width: 150, height: 20 }} />
+          </View>
+
+          {[...Array(3)].map((_, idx) => (
+            <View key={idx} style={{ marginBottom: 20 }}>
+              <View style={{ width: '100%', height: 180, borderRadius: 8 }} />
+              <View style={{ marginTop: 10, width: '90%', height: 20 }} />
+              <View style={{ marginTop: 6, width: '80%', height: 20 }} />
+            </View>
+          ))}
+        </SkeletonPlaceholder>
+      </ScrollView>
     );
   }
 
-  const displayTemp = weatherTemp !== null ? 
-    `${weatherTemp.toFixed(1)}°${preferences.unit === 'metric' ? 'C' : 'F'}` 
+  const displayTemp = weatherTemp !== null ?
+    `${weatherTemp.toFixed(1)}°${preferences.unit === 'metric' ? 'C' : 'F'}`
     : '--';
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.weatherContainer}>
-        <Text style={styles.weatherText}>Current Temperature: {displayTemp}</Text>
-        <Text style={styles.weatherText}>Condition: {weatherDesc}</Text>
-      </View>
-      <Text style={styles.newsHeader}>News Headlines:</Text>
-      {newsArticles.map((article, index) => (
-        <View key={index} style={styles.articleContainer}>
-          <Text style={styles.articleTitle}>{article.title}</Text>
-          {article.description ? (
-            <Text style={styles.articleDesc}>{article.description}</Text>
-          ) : null}
+    <FlatList
+      ListHeaderComponent={
+        <>
+<LinearGradient colors={['#a1c4fd', '#c2e9fb']} style={styles.weatherCard}>
+  <Text style={styles.weatherTitle}>🌤️ Today's Weather</Text>
+  <Text style={styles.weatherText}>Temperature: {displayTemp}</Text>
+  <Text style={styles.weatherText}>Condition: {weatherDesc}</Text>
+</LinearGradient>
+        </>
+      }
+      data={newsArticles}
+      keyExtractor={(_, index) => index.toString()}
+      renderItem={({ item }) => (
+        <View style={{ marginBottom: 20 }}>
+          {item.urlToImage && (
+            <Card.Image
+              source={{ uri: item.urlToImage }}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          )}
+          <View style={styles.articleContainer}>
+            <Text style={styles.articleTitle}>{item.title}</Text>
+            {item.description ? (
+              <Text style={styles.articleDesc}>{item.description}</Text>
+            ) : null}
+          </View>
         </View>
-      ))}
-    </ScrollView>
+      )}
+      contentContainerStyle={styles.flexcontainer}
+    />
   );
 };
 
@@ -101,19 +133,8 @@ export const homeScreenOptions = ({ navigation }: any) => ({
 });
 
 const styles = StyleSheet.create({
-//   container: {
-//     padding: 16,
-//   },
   weatherContainer: {
     marginBottom: 20,
-  },
-  weatherText: {
-    fontSize: 18,
-    marginBottom: 4,
-  },
-  newsHeader: {
-    fontSize: 20,
-    marginBottom: 10,
   },
   articleContainer: {
     marginBottom: 12,
@@ -134,11 +155,49 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
+  image: {
+    width: '100%',
+    height: 180,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  flexcontainer: { backgroundColor: '#f2f2f2', padding: 10 },
   container: { flex: 1, backgroundColor: '#f2f2f2', padding: 10 },
   header: { fontSize: 22, fontWeight: 'bold', marginVertical: 10, color: '#0077b6' },
   card: { borderRadius: 10 },
   newsCard: { borderRadius: 10, backgroundColor: '#ffffff' },
   title: { fontSize: 16, fontWeight: '600' },
   link: { marginTop: 10, color: '#1e90ff' },
+
+  weatherCard: {
+  padding: 16,
+  borderRadius: 12,
+  backgroundColor: '#e0f7fa',
+  marginBottom: 20,
+  elevation: 3, // shadow for Android
+  shadowColor: '#000', // shadow for iOS
+  shadowOpacity: 0.1,
+  shadowRadius: 4,
+  shadowOffset: { width: 0, height: 2 },
+},
+
+weatherTitle: {
+  fontSize: 20,
+  fontWeight: 'bold',
+  marginBottom: 8,
+  color: '#00796b',
+},
+
+weatherText: {
+  fontSize: 16,
+  color: '#333',
+},
+
+newsHeader: {
+  fontSize: 20,
+  fontWeight: 'bold',
+  marginBottom: 10,
+  color: '#1e3a8a',
+},
+
 });

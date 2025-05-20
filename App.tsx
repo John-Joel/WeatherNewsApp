@@ -1,15 +1,17 @@
 // App.tsx
 import 'react-native-gesture-handler';  // needed for React Navigation
 import React from 'react';
-import { Button } from 'react-native';
+import { Button, TouchableOpacity } from 'react-native';
 import { PreferencesProvider } from './src/contexts/PreferencesContext';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { HomeScreen, homeScreenOptions } from './src/screens/HomeScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
+import SplashScreen from './src/screens/SplashScreen';
 
 export type RootStackParamList = {
+  SplashScreen: undefined;
   Home: undefined;
   Settings: undefined;
 };
@@ -21,22 +23,29 @@ const App = () => {
     <PreferencesProvider>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen 
-            name="Home" 
-            component={HomeScreen} 
+          <Stack.Screen
+            name="SplashScreen"
+            component={SplashScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
             options={({ navigation }) => ({
               title: 'Home',
               headerRight: () => (
-                <Button 
-                  title="Settings" 
-                  onPress={() => navigation.navigate('Settings')} 
-                />
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Settings')}
+                  style={{ paddingRight: 15 }}
+                >
+                  <Ionicons name="settings-outline" size={24} color="#007AFF" />
+                </TouchableOpacity>
               ),
             })}
           />
-          <Stack.Screen 
-            name="Settings" 
-            component={SettingsScreen} 
+          <Stack.Screen
+            name="Settings"
+            component={SettingsScreen}
             options={{ title: 'Settings' }}
           />
         </Stack.Navigator>
