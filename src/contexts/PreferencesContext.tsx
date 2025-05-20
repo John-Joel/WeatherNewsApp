@@ -1,4 +1,3 @@
-// src/contexts/PreferencesContext.tsx
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -26,7 +25,6 @@ export const PreferencesProvider: React.FC<{children: ReactNode}> = ({ children 
     categories: [],
   });
 
-  // Load preferences from AsyncStorage on mount
   useEffect(() => {
     AsyncStorage.getItem('preferences').then(value => {
       if (value) {
@@ -35,7 +33,6 @@ export const PreferencesProvider: React.FC<{children: ReactNode}> = ({ children 
     });
   }, []);
 
-  // Update AsyncStorage whenever preferences change
   const savePreferences = async (newPrefs: Preferences) => {
     setPreferences(newPrefs);
     await AsyncStorage.setItem('preferences', JSON.stringify(newPrefs));

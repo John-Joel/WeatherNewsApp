@@ -10,6 +10,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 const LATITUDE = 51.5074;   // Example: London
 const LONGITUDE = -0.1278;
+import { scale, verticalScale, moderateScale, wp, hp } from '../utils/responsive';
 
 export const HomeScreen = ({ navigation }: any) => {
   const prefsContext = useContext(PreferencesContext);
@@ -24,15 +25,12 @@ export const HomeScreen = ({ navigation }: any) => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch weather data
         const weatherResp = await getWeatherForecast(LATITUDE, LONGITUDE, preferences.unit);
         const forecast = weatherResp.data;
-        const currentTemp = forecast.list[0].main.temp;  // first forecast entry
+        const currentTemp = forecast.list[0].main.temp;
         const desc = forecast.list[0].weather[0].description;
         setWeatherTemp(currentTemp);
         setWeatherDesc(desc);
-
-        // Determine mood query based on temperature in Celsius
         const tempC = preferences.unit === 'metric'
           ? currentTemp
           : (currentTemp - 32) * (5 / 9);
@@ -45,7 +43,6 @@ export const HomeScreen = ({ navigation }: any) => {
           moodQuery = 'happy OR success';
         }
 
-        // Fetch news for each selected category (or general if none)
         let articles: any[] = [];
         const categories = preferences.categories.length > 0
           ? preferences.categories
@@ -67,18 +64,22 @@ export const HomeScreen = ({ navigation }: any) => {
 
   if (loading) {
     return (
-      <ScrollView style={{ flex: 1, backgroundColor: '#f2f2f2', }}>
-        <SkeletonPlaceholder borderRadius={4}>
-          <View style={{ marginVertical: 20 }}>
-            <View style={{ width: 200, height: 20, marginBottom: 6 }} />
-            <View style={{ width: 150, height: 20 }} />
+      <ScrollView contentContainerStyle={{ flex: 1, backgroundColor: '#fff' }}>
+      <SkeletonPlaceholder
+        borderRadius={4}
+        backgroundColor="#eaeaea"
+        highlightColor="#f5f5f5"
+      >
+          <View style={{ marginVertical: verticalScale(20) }}>
+            <View style={{ width: wp('50%'), height: verticalScale(20), marginBottom: verticalScale(6) }} />
+            <View style={{ width: wp('40%'), height: verticalScale(20) }} />
           </View>
 
           {[...Array(3)].map((_, idx) => (
-            <View key={idx} style={{ marginBottom: 20 }}>
-              <View style={{ width: '100%', height: 180, borderRadius: 8 }} />
-              <View style={{ marginTop: 10, width: '90%', height: 20 }} />
-              <View style={{ marginTop: 6, width: '80%', height: 20 }} />
+            <View key={idx} style={{ marginBottom: verticalScale(20) }}>
+              <View style={{ width: '100%', height: verticalScale(180), borderRadius: scale(8) }} />
+              <View style={{ marginTop: verticalScale(10), width: '90%', height: verticalScale(20) }} />
+              <View style={{ marginTop: verticalScale(6), width: '80%', height: verticalScale(20) }} />
             </View>
           ))}
         </SkeletonPlaceholder>
@@ -94,11 +95,11 @@ export const HomeScreen = ({ navigation }: any) => {
     <FlatList
       ListHeaderComponent={
         <>
-<LinearGradient colors={['#a1c4fd', '#c2e9fb']} style={styles.weatherCard}>
-  <Text style={styles.weatherTitle}>🌤️ Today's Weather</Text>
-  <Text style={styles.weatherText}>Temperature: {displayTemp}</Text>
-  <Text style={styles.weatherText}>Condition: {weatherDesc}</Text>
-</LinearGradient>
+          <LinearGradient colors={['#a1c4fd', '#c2e9fb']} style={styles.weatherCard}>
+            <Text style={styles.weatherTitle}>🌤️ Today's Weather</Text>
+            <Text style={styles.weatherText}>Temperature: {displayTemp}</Text>
+            <Text style={styles.weatherText}>Condition: {weatherDesc}</Text>
+          </LinearGradient>
         </>
       }
       data={newsArticles}
@@ -134,21 +135,21 @@ export const homeScreenOptions = ({ navigation }: any) => ({
 
 const styles = StyleSheet.create({
   weatherContainer: {
-    marginBottom: 20,
+    marginBottom: verticalScale(20),
   },
   articleContainer: {
-    marginBottom: 12,
-    padding: 8,
+    marginBottom: verticalScale(12),
+    padding: scale(8),
     backgroundColor: '#f0f0f0',
-    borderRadius: 6,
+    borderRadius: scale(6),
   },
   articleTitle: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: 'bold',
   },
   articleDesc: {
-    marginTop: 4,
-    fontSize: 14,
+    marginTop: verticalScale(4),
+    fontSize: moderateScale(14),
   },
   centered: {
     flex: 1,
@@ -157,47 +158,70 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 180,
-    borderRadius: 8,
-    marginBottom: 10,
+    height: verticalScale(180),
+    borderRadius: scale(8),
+    marginBottom: verticalScale(10),
   },
-  flexcontainer: { backgroundColor: '#f2f2f2', padding: 10 },
-  container: { flex: 1, backgroundColor: '#f2f2f2', padding: 10 },
-  header: { fontSize: 22, fontWeight: 'bold', marginVertical: 10, color: '#0077b6' },
-  card: { borderRadius: 10 },
-  newsCard: { borderRadius: 10, backgroundColor: '#ffffff' },
-  title: { fontSize: 16, fontWeight: '600' },
-  link: { marginTop: 10, color: '#1e90ff' },
+  flexcontainer: {
+    backgroundColor: '#f2f2f2',
+    padding: scale(10),
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#f2f2f2',
+    padding: scale(10),
+  },
+  header: {
+    fontSize: moderateScale(22),
+    fontWeight: 'bold',
+    marginVertical: verticalScale(10),
+    color: '#0077b6',
+  },
+  card: {
+    borderRadius: scale(10),
+  },
+  newsCard: {
+    borderRadius: scale(10),
+    backgroundColor: '#ffffff',
+  },
+  title: {
+    fontSize: moderateScale(16),
+    fontWeight: '600',
+  },
+  link: {
+    marginTop: verticalScale(10),
+    color: '#1e90ff',
+  },
 
   weatherCard: {
-  padding: 16,
-  borderRadius: 12,
-  backgroundColor: '#e0f7fa',
-  marginBottom: 20,
-  elevation: 3, // shadow for Android
-  shadowColor: '#000', // shadow for iOS
-  shadowOpacity: 0.1,
-  shadowRadius: 4,
-  shadowOffset: { width: 0, height: 2 },
-},
+    padding: scale(16),
+    borderRadius: scale(12),
+    backgroundColor: '#e0f7fa',
+    marginBottom: verticalScale(20),
+    elevation: 3, // shadow for Android
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+  },
 
-weatherTitle: {
-  fontSize: 20,
-  fontWeight: 'bold',
-  marginBottom: 8,
-  color: '#00796b',
-},
+  weatherTitle: {
+    fontSize: moderateScale(20),
+    fontWeight: 'bold',
+    marginBottom: verticalScale(8),
+    color: '#00796b',
+  },
 
-weatherText: {
-  fontSize: 16,
-  color: '#333',
-},
+  weatherText: {
+    fontSize: moderateScale(16),
+    color: '#333',
+  },
 
-newsHeader: {
-  fontSize: 20,
-  fontWeight: 'bold',
-  marginBottom: 10,
-  color: '#1e3a8a',
-},
-
+  newsHeader: {
+    fontSize: moderateScale(20),
+    fontWeight: 'bold',
+    marginBottom: verticalScale(10),
+    color: '#1e3a8a',
+  },
 });
+

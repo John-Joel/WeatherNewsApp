@@ -1,7 +1,7 @@
-// src/screens/SettingsScreen.tsx
 import React, { useContext } from 'react';
 import { View, Text, Switch, StyleSheet, ScrollView } from 'react-native';
 import { PreferencesContext, NEWS_CATEGORIES } from '../contexts/PreferencesContext';
+import { scale, verticalScale, moderateScale, wp, hp } from '../utils/responsive';
 
 export const SettingsScreen = () => {
   const prefsContext = useContext(PreferencesContext);
@@ -31,7 +31,9 @@ export const SettingsScreen = () => {
               value={isSelected}
               onValueChange={() => toggleCategory(cat)}
             />
-            <Text style={styles.label}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</Text>
+            <Text style={styles.label}>
+              {cat.charAt(0).toUpperCase() + cat.slice(1)}
+            </Text>
           </View>
         );
       })}
@@ -41,21 +43,22 @@ export const SettingsScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: moderateScale(16),
+    paddingBottom: verticalScale(32),
   },
   sectionHeader: {
-    fontSize: 18,
-    marginTop: 20,
-    marginBottom: 10,
+    fontSize: moderateScale(18),
+    marginTop: verticalScale(20),
+    marginBottom: verticalScale(10),
     fontWeight: 'bold',
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: verticalScale(12),
   },
   label: {
-    fontSize: 16,
-    marginHorizontal: 8,
+    fontSize: moderateScale(16),
+    marginHorizontal: scale(8),
   },
 });

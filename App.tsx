@@ -1,5 +1,4 @@
-// App.tsx
-import 'react-native-gesture-handler';  // needed for React Navigation
+import 'react-native-gesture-handler';
 import React from 'react';
 import { Button, TouchableOpacity } from 'react-native';
 import { PreferencesProvider } from './src/contexts/PreferencesContext';
@@ -9,7 +8,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { HomeScreen, homeScreenOptions } from './src/screens/HomeScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
 import SplashScreen from './src/screens/SplashScreen';
-
+import AnimatedTitle from './src/components/AnimatedTitle';
 export type RootStackParamList = {
   SplashScreen: undefined;
   Home: undefined;
@@ -32,7 +31,7 @@ const App = () => {
             name="Home"
             component={HomeScreen}
             options={({ navigation }) => ({
-              title: 'Home',
+              headerTitle: () => <AnimatedTitle />,
               headerRight: () => (
                 <TouchableOpacity
                   onPress={() => navigation.navigate('Settings')}
@@ -46,7 +45,9 @@ const App = () => {
           <Stack.Screen
             name="Settings"
             component={SettingsScreen}
-            options={{ title: 'Settings' }}
+            options={{
+              headerTitle: () => <AnimatedTitle />,
+            }}
           />
         </Stack.Navigator>
       </NavigationContainer>

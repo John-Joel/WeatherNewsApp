@@ -1,7 +1,8 @@
-// src/screens/SplashScreen.tsx
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import LottieView from 'lottie-react-native';
+import { scale, verticalScale, moderateScale, wp, hp } from '../utils/responsive';
+
 const SplashScreen = ({ navigation }: any) => {
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -33,14 +34,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    fontSize: 28,
+    fontSize: moderateScale(24), 
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: verticalScale(20),
     color: '#0077b6',
+    textAlign: 'center',
   },
-    lottie: {
-    width: 200,
-    height: 200,
-    marginBottom: 20,
+  lottie: {
+    width: wp('50%'), 
+    height: wp('50%'),
+    marginBottom: verticalScale(20),
   },
 });
